@@ -1,0 +1,15 @@
+[submodule "submodules/Grounded-Segment-Anything"]
+	path = submodules/Grounded-Segment-Anything
+	url = https://github.com/IDEA-Research/Grounded-Segment-Anything.git
+[submodule "submodules/GLIGEN"]
+	path = submodules/GLIGEN
+	url = https://github.com/gligen/GLIGEN.git
+[submodule "submodules/lama-cleaner"]
+	path = submodules/lama-cleaner
+	url = https://github.com/Sanster/lama-cleaner
+[submodule "submodules/lama"]
+	path = submodules/lama
+	url = https://github.com/advimman/lama.git
+[submodule "submodules/Inpaint-Anything"]
+	path = submodules/Inpaint-Anything
+	url = https://github.com/geekyutao/Inpaint-Anything.git
