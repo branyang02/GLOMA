@@ -57,7 +57,7 @@ def inpaint_img_with_lama(
     )
     model = load_checkpoint(
         train_config, checkpoint_path, strict=False, map_location='cpu')
-    model.dtype = torch.float16
+    # model.to(dtype=torch.float16)
     model.freeze()
     if not predict_config.get('refine', False):
         model.to(device)
@@ -106,7 +106,7 @@ def build_lama_model(
         predict_config.model.checkpoint
     )
     model = load_checkpoint(train_config, checkpoint_path, strict=False)
-    model.dtype = torch.float16
+    # model.to(dtype=torch.float16)
     model.to(device)
     model.freeze()
     return model
