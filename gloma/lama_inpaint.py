@@ -106,6 +106,7 @@ def build_lama_model(
         predict_config.model.checkpoint
     )
     model = load_checkpoint(train_config, checkpoint_path, strict=False)
+    model.dtype = torch.float16
     model.to(device)
     model.freeze()
     return model
