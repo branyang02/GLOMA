@@ -146,7 +146,7 @@ class GLOMA:
     
 
     def predict_new_bbox(self, obj_of_motion_bbox: np.ndarray, objs_of_reference_bbox: Dict) -> List[float]:
-        # convert float to int
+        # convert bbox values from float to int
         obj_of_motion_bbox = {key: [int(val) for val in value] for key, value in obj_of_motion_bbox.items()}
         objs_of_reference_bbox = {key: [int(val) for val in value] for key, value in objs_of_reference_bbox.items()}
 
