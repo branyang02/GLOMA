@@ -52,11 +52,11 @@ cd GLIGEN
 cd ../..
 
 
-# install checkpoints
-mkdir checkpoints && cd checkpoints
-wget wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
-wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
-pip install wldhx.yadisk-direct
-curl -L $(yadisk-direct https://disk.yandex.ru/d/ouP6l8VJ0HpMZg) -o big-lama.zip
-unzip big-lama.zip
+# # install checkpoints
+# mkdir checkpoints && cd checkpoints
+# wget wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+# wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
+# pip install wldhx.yadisk-direct
+# curl -L $(yadisk-direct https://disk.yandex.ru/d/ouP6l8VJ0HpMZg) -o big-lama.zip
+# unzip big-lama.zip
 
