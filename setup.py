@@ -22,7 +22,7 @@ class PostInstallCommand(install):
         subprocess.call(["./install_submodules.sh"])
 
 setup(
-    name='GLOMA_v2',
+    name='GLOMA_v1',
     version='0.1',
     packages=find_packages(),
     cmdclass={
