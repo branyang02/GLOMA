@@ -38,7 +38,8 @@ class GLOMA:
             text_threshold,
             nms_threshold,
             llm_choice,
-            rgb_image
+            rgb_image,
+            debug_mode=False
     ):
         self.action_prompt = action_prompt
         self.box_threshold = box_threshold
@@ -46,6 +47,7 @@ class GLOMA:
         self.nms_threshold = nms_threshold
         self.llm_choice = llm_choice
         self.rgb_image = rgb_image
+        self.debug_mode = debug_mode
     
 
     def get_object_names(self) -> Tuple[str, List[str]]:
@@ -115,14 +117,16 @@ class GLOMA:
 
         # 1. create ObjectRemoval object
         remover = ObjectRemoval(rgb_image, detections, class_prompt)
-        # DEBUG: visualize objs_of_reference
-        helper.draw_masks(rgb_image, list(remover.masks["objs_of_reference"].values()))
+        if self.debug_mode:
+            # DEBUG: visualize objs_of_reference
+            helper.draw_masks(rgb_image, list(remover.masks["objs_of_reference"].values()))
 
         # 2. extract object of motion image (cropped)
         obj_of_motion_mask = remover.get_obj_of_motion_mask()
         obj_of_motion_image = remover.get_image_of_mask(rgb_image, obj_of_motion_mask)
-        # DEBUG: visualize obj_of_action
-        helper.save_image(obj_of_motion_image, "obj_of_motion_image.jpg")
+        if self.debug_mode:
+            # DEBUG: visualize obj_of_action
+            helper.save_image(obj_of_motion_image, "obj_of_motion_image.jpg")
 
         # 3. remove object of motion from image
         inpainted_image = remover.inpaint_image(
@@ -130,8 +134,9 @@ class GLOMA:
             mask=obj_of_motion_mask,
         )
 
-        # DEBUG: visualize inpainted_image
-        helper.save_image(inpainted_image, "inpainted_image.jpg")
+        if self.debug_mode:
+            # DEBUG: visualize inpainted_image
+            helper.save_image(inpainted_image, "inpainted_image.jpg")
 
         # 4. extract bounding boxes
         obj_of_motion_bbox = remover.get_obj_of_motion_bbox()
@@ -164,8 +169,9 @@ class GLOMA:
 
         # 2. SAM
         detections, class_prompt = self.grounded_sam_detections(class_prompt=[obj_of_motion] + objs_of_reference)
-        # DEBUG: visualize detected bouding boxes 
-        helper.draw_bounding_boxes(self.rgb_image, detections, name="detected_bounding_boxes.jpg")
+        if self.debug_mode:
+            # DEBUG: visualize detected bouding boxes 
+            helper.draw_bounding_boxes(self.rgb_image, detections, name="detected_bounding_boxes.jpg")
 
         # 3. Object Removal
         inpainted_image, obj_of_motion_image, obj_of_motion_bbox, objs_of_reference_bbox = self.remove_object(self.rgb_image, detections, class_prompt)
@@ -175,8 +181,9 @@ class GLOMA:
         # 4. Predict new bbox
         predicted_bbox = self.predict_new_bbox(obj_of_motion_bbox, objs_of_reference_bbox)
         print("predicted bbox: ", predicted_bbox)
-        # DEBUG: visualize predicted bbox
-        helper.draw_predicted_bbox(inpainted_image, predicted_bbox, "predicted_bbox.jpg")
+        if self.debug_mode:
+            # DEBUG: visualize predicted bbox
+            helper.draw_predicted_bbox(inpainted_image, predicted_bbox, "predicted_bbox.jpg")
 
         return None
 
