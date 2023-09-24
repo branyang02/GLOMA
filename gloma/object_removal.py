@@ -16,7 +16,7 @@ class ObjectRemoval:
         self.masks = self._create_masks()
         self.bboxes = self._create_bboxes()
 
-    def _create_bboxes(self):
+    def _create_bboxes(self) -> Dict:
         """
         Create bounding boxes for all objects in the image.
         
@@ -45,7 +45,7 @@ class ObjectRemoval:
                 bboxes["objs_of_reference"][self.class_prompt[self.detections.class_id[i]]] = bbox
         return bboxes
 
-    def _create_masks(self):
+    def _create_masks(self) -> Dict:
         """
         Create masks for all objects in the image.
         
