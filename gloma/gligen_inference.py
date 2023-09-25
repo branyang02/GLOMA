@@ -152,7 +152,7 @@ def get_clip_feature(model, processor, input, is_image=False):
         outputs = model(**inputs)
         feature = outputs.image_embeds 
         if which_layer_image == 'after_reproject':
-            print("Your current path is: ", os.getcwd())
+            # print("Your current path is: ", os.getcwd())
             feature = project(feature, torch.load('../submodules/GLIGEN/projection_matrix').cuda().T).squeeze(0)
             feature = (feature / feature.norm()) * 28.7 
             feature = feature.unsqueeze(0)
@@ -519,7 +519,7 @@ def run_model(
         locations, 
         folder="generation_samples", 
         # HYPERPARAMETERS FOR GLIGEN
-        batch_size=5, 
+        batch_size=1, 
         no_plms=False, 
         guidance_scale=7.5, 
         negative_prompt='longbody, lowres, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality',
@@ -528,10 +528,10 @@ def run_model(
 
     config = dict(
         ckpt = "../checkpoints/checkpoint_inpainting_text_image.pth",
-        input_image = input_image,  # orginally path
+        input_image = input_image,
         prompt = prompt,
-        images = images,        # originally path
-        locations = locations, # mask will be derived from box 
+        images = images,
+        locations = locations, 
         save_folder_name="inpainting_box_image"
     )
 
@@ -547,18 +547,3 @@ def run_model(
         starting_noise,
         image_size,
     )
-
-
-
-
-
-"""
-# Example usage
-# device should be defined in your script, e.g., device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-run_model(
-    input_image = "inference_images/removed.jpg",
-    prompt = "stack the blue cube on top of the red cube",
-    images = ['inference_images/object.jpg'],
-    device = device
-)
-"""
