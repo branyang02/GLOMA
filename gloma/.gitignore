@@ -166,3 +166,5 @@ core*
 *.egg-info/
 *.log
 *.bak
+
+generation_samples/
