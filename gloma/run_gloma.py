@@ -1,8 +1,11 @@
-from gloma import GLOMA
 import argparse
-import cv2
 import os
+
+import cv2
 from utils import helper
+
+from gloma import GLOMA
+
 
 def main():
     parser = argparse.ArgumentParser(description='GLOMA - Grounded Location for Object Manipulation Agent')
@@ -47,6 +50,9 @@ def main():
         starting_noise=args.starting_noise,
         guidance_scale=args.guidance_scale
     )
-    result_image = gloma.run_gloma()
+    result_images = gloma.run_gloma()
+    for i, result_image in enumerate(result_images):
+        cv2.imwrite(f"result_{i}.jpg", result_image)
+
 
 main()

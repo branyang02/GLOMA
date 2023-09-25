@@ -9,25 +9,9 @@ from SAM_detection import GroundedSAM
 from LLM.llm_factory import LLMFactory
 from LLM.llm_input_prompt import BOUNDING_BOX_PROMPT, OBJECT_PROMPT
 from utils import helper
-from gligen_inference import run_model
-
-# # Get the absolute path of the script's directory
-# script_dir = Path(__file__).resolve().parent
-
-# # Go up one level to the 'GLOMA' directory
-# base_dir = script_dir.parent
-
-# # Construct the path to 'submodules/gligen'
-# gligen_path = base_dir / 'submodules' / 'gligen'
-
-# # Add the path to the system path
-# sys.path.insert(0, str(gligen_path))
-
+from gligen_inference import generate_new_img
 
 from object_removal import ObjectRemoval
-# from run_gligen import run_model
-
-
 
 
 class GLOMA:
@@ -194,16 +178,15 @@ class GLOMA:
         # 5. Generate new image (GLIGEN)
         # convert bbox to relative coordinates
         predicted_bbox = helper.convert_bbox_to_relative_coordinates(predicted_bbox, inpainted_image.shape)
-        run_model(
+        return generate_new_img(
             input_image=inpainted_image,
             prompt=self.action_prompt,
             images=[obj_of_motion_image],
             locations=[predicted_bbox],
             starting_noise_flag=self.starting_noise,
-            guidance_scale=self.guidance_scale
+            guidance_scale=self.guidance_scale,
+            debug_mode=self.debug_mode
         )
-
-        return None
 
 
 

@@ -155,8 +155,6 @@ def convert_bbox_to_relative_coordinates(bbox: List[float], image_shape: Tuple[i
     - tuple: The bounding box in relative coordinates.
     """
     height, width = image_shape[0], image_shape[1]
-    print("Image Width: ", width)
-    print("Image Height: ", height)
     
     x1_rel = bbox[0] / width
     y1_rel = bbox[1] / height

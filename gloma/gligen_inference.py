@@ -22,6 +22,7 @@ from functools import partial
 import torchvision.transforms.functional as F
 import torchvision.transforms.functional as TF
 import torchvision.transforms as transforms
+import cv2
 
 device = "cuda"
 
@@ -392,6 +393,7 @@ def run(
     negative_prompt,
     starting_noise,
     image_size,
+    debug_mode
 ):
     # - - - - - prepare models - - - - - # 
     model, autoencoder, text_encoder, diffusion, config = load_ckpt(meta["ckpt"])
@@ -496,23 +498,37 @@ def run(
     samples_fake = sampler.sample(S=steps, shape=shape, input=input,  uc=uc, guidance_scale=guidance_scale, mask=inpainting_mask, x0=z0)
     samples_fake = autoencoder.decode(samples_fake)
 
+    # - - - - - save images - - - - - #
+    output_folder = os.path.join(folder, meta["save_folder_name"])
 
-    # - - - - - save - - - - - #
-    output_folder = os.path.join( folder,  meta["save_folder_name"])
-    os.makedirs( output_folder, exist_ok=True)
+    if debug_mode:
+        os.makedirs(output_folder, exist_ok=True)
 
-    start = len( os.listdir(output_folder) )
-    image_ids = list(range(start,start+batch_size))
+    start = len(os.listdir(output_folder)) if debug_mode else 0
+    image_ids = list(range(start, start + batch_size)) if debug_mode else list(range(batch_size))
     print(image_ids)
+
+    opencv_images = []
+
     for image_id, sample in zip(image_ids, samples_fake):
-        img_name = str(int(image_id))+'.png'
         sample = torch.clamp(sample, min=-1, max=1) * 0.5 + 0.5
-        sample = sample.cpu().numpy().transpose(1,2,0) * 255 
-        sample = Image.fromarray(sample.astype(np.uint8))
-        sample.save(  os.path.join(output_folder, img_name)   )
+        sample_np = sample.cpu().numpy().transpose(1, 2, 0) * 255
+        sample_pil = Image.fromarray(sample_np.astype(np.uint8))
+        
+        if debug_mode:
+            img_name = str(int(image_id)) + '.png'
+            sample_pil.save(os.path.join(output_folder, img_name))
+        
+        # Convert the PIL image to OpenCV format regardless of the debug_mode
+        sample_cv = cv2.cvtColor(np.array(sample_pil), cv2.COLOR_RGB2BGR)
+        opencv_images.append(sample_cv)
+
+    # If not in debug_mode, opencv_images will contain all your images in OpenCV format without saving them.
+    return opencv_images
 
 
-def run_model(
+
+def generate_new_img(
         input_image, 
         prompt, 
         images, 
@@ -524,6 +540,7 @@ def run_model(
         negative_prompt='longbody, lowres, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality',
         image_size=512,
         starting_noise_flag=None,
+        debug_mode=False,
         ):
 
     config = dict(
@@ -540,9 +557,7 @@ def run_model(
     else:
         starting_noise = None
 
-    print("GUIDANCE SCALE: ", guidance_scale)
-
-    run(
+    return run(
         config,
         folder,
         batch_size,
@@ -551,4 +566,5 @@ def run_model(
         negative_prompt,
         starting_noise,
         image_size,
+        debug_mode
     )
