@@ -168,3 +168,4 @@ core*
 *.bak
 
 generation_samples/
+debug_images/
