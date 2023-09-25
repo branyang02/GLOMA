@@ -9,6 +9,7 @@ from SAM_detection import GroundedSAM
 from LLM.llm_factory import LLMFactory
 from LLM.llm_input_prompt import BOUNDING_BOX_PROMPT, OBJECT_PROMPT
 from utils import helper
+from gligen_inference import run_model
 
 # # Get the absolute path of the script's directory
 # script_dir = Path(__file__).resolve().parent
@@ -183,35 +184,18 @@ class GLOMA:
             # DEBUG: visualize predicted bbox
             helper.draw_predicted_bbox(inpainted_image, predicted_bbox, "predicted_bbox.jpg")
 
-        return None
 
         # 5. Generate new image (GLIGEN)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # save_image_with_incremental_number("original", self.rgb_image)
-        cv2.imwrite("removed.jpg", removed_image)
-        cv2.imwrite("object.jpg", obj_image)
-        new_bounding_box = self.get_new_bounding_box(obj_of_motion, obj_of_reference, obj_of_motion_box, obj_of_reference_box)
-
-        print(new_bounding_box)
-
+        # convert bbox to relative coordinates
+        predicted_bbox = helper.convert_bbox_to_relative_coordinates(predicted_bbox, inpainted_image.shape)
         run_model(
-            input_image = "removed.jpg",
+            input_image = inpainted_image,
             prompt = self.action_prompt,
-            images = ['object.jpg'],
-            locations = [new_bounding_box],
+            images = [obj_of_motion_image],
+            locations = [predicted_bbox],
         )
+
         return None
+
+
+
