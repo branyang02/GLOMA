@@ -14,6 +14,7 @@ def main():
     parser.add_argument('--image_path', help='Input Image', required=True)
     parser.add_argument('--debug_mode', help='Debug Mode', default=False, type=bool)
     parser.add_argument('--image_size', help='Image Size', default=512, type=int)
+    parser.add_argument('--dilution_factor', help='Dilution Factor', default=30, type=int)
     args = parser.parse_args()
 
     action_prompt = args.action_prompt
@@ -38,6 +39,7 @@ def main():
         llm_choice=llm_choice,
         rgb_image=rgb_image,
         debug_mode=args.debug_mode,
+        dilution_factor=args.dilution_factor
     )
     result_image = gloma.run_gloma()
 

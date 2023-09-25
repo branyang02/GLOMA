@@ -40,7 +40,8 @@ class GLOMA:
             nms_threshold,
             llm_choice,
             rgb_image,
-            debug_mode=False
+            debug_mode=False,
+            dilution_factor=30,
     ):
         self.action_prompt = action_prompt
         self.box_threshold = box_threshold
@@ -49,6 +50,7 @@ class GLOMA:
         self.llm_choice = llm_choice
         self.rgb_image = rgb_image
         self.debug_mode = debug_mode
+        self.dilution_factor = dilution_factor
     
 
     def get_object_names(self) -> Tuple[str, List[str]]:
@@ -117,7 +119,7 @@ class GLOMA:
         """
 
         # 1. create ObjectRemoval object
-        remover = ObjectRemoval(rgb_image, detections, class_prompt)
+        remover = ObjectRemoval(rgb_image, detections, class_prompt, self.dilution_factor)
         if self.debug_mode:
             # DEBUG: visualize objs_of_reference
             helper.draw_masks(rgb_image, list(remover.masks["objs_of_reference"].values()))

@@ -8,9 +8,10 @@ from utils import helper
 
 class ObjectRemoval:
 
-    def __init__(self, image, detections, class_prompt):
+    def __init__(self, image, detections, class_prompt, dilate_factor=30):
         self.image = image
         self.detections = detections
+        self.dilate_factor = dilate_factor
         self.class_ids = detections.class_id  # array([2, 0, 1])
         self.class_prompt = class_prompt  # ['green cube', 'yellow cube', 'blue cube']
         self.masks = self._create_masks()
@@ -68,12 +69,13 @@ class ObjectRemoval:
         }
         for i, mask in enumerate(self.detections.mask):
             if self.detections.class_id[i] == 0:
-                masks["obj_of_motion"][self.class_prompt[self.detections.class_id[i]]] = self._dilate_mask(mask)
+                masks["obj_of_motion"][self.class_prompt[self.detections.class_id[i]]] = self._dilate_mask(mask, dilate_factor=self.dilate_factor)
             else:
-                masks["objs_of_reference"][self.class_prompt[self.detections.class_id[i]]] = self._dilate_mask(mask)
+                masks["objs_of_reference"][self.class_prompt[self.detections.class_id[i]]] = self._dilate_mask(mask, dilate_factor=self.dilate_factor)
         return masks
     
     def _dilate_mask(self, mask, dilate_factor=30):
+        print("Dilating mask with FACTOR: {}".format(dilate_factor))
         mask = mask.astype(np.uint8)
         mask = cv2.dilate(
             mask,
