@@ -8,6 +8,15 @@ GLOMA's intuitive interface allows users to communicate their image editing need
 
 <img width="1279" alt="image" src="https://github.com/branyang02/GLOMA/assets/107154811/3564dc6d-6733-445d-9143-ef914ce04642">
 
+## Table of Contents
+- [Features](#features)
+- [Overview](#overview)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+- [License](#license)
+
 
 ## Features
 
@@ -25,7 +34,6 @@ This repository contains the code and resources for the GLOMA project. The proje
 
 ## Installation
 
-1. **Clone the repository:** 
 ```bash
 git clone https://github.com/branyang02/GLOMA
 cd GLOMA
@@ -54,44 +62,57 @@ mv diffusion_pytorch_model.bin checkpoint_inpainting_text_image.pth
 
 ## Usage
 
-Example usage:
+Navigate to GLOMA/gloma and run the following example
 
 ```bash
 python run_gloma.py --image_path assets/2.jpg --action_prompt "put the green cube on top of the yellow cube and in front of the blue cube"
 ```
-### The following command-line arguments are available:
-* --action_prompt: Action prompt for GroundedSAM. This is a text * description of the action you want the GroundedSAM to perform. Default: "stack the blue cube on top of the red cube"
-* --box_threshold: Box Threshold. This is the confidence threshold for bounding box detection. Default: 0.3
-* --text_threshold: Text Threshold. This is the confidence threshold for text detection. Default: 0.25
-* --nms_threshold: NMS Threshold. This is the non-maximum suppression threshold for bounding box overlap. Default: 0.2
-* --llm: Choose either ChatGPT or Llama for the language model. Options: chatgpt, llama. Default: chatgpt
-* --image_path: Input Image. The path to the image file on which the GroundedSAM will perform the action. This argument is required.
-
+## Arguments:
+- `--action_prompt`: Textual action for image manipulation. Default: "stack the blue cube on top of the red cube".
+- `--box_threshold`: Confidence level for bounding box detection. Default: 0.3.
+- `--text_threshold`: Confidence level for text detection. Default: 0.25.
+- `--nms_threshold`: Overlap threshold for merging bounding boxes. Default: 0.2.
+- `--llm`:  Language model choice: "chatgpt" or "llama". Default: "chatgpt".
+- `--image_path`: Path to the input image. Required.
+- `--debug_mode`:  Toggle debug mode. This will save the intermediate masks and images that are processed in folder "debug_images". Default: False.
+- `--image_size`:  Resolution of input image (in pixels). Images are processed as squared images. Default: 512.
+- `--dilution_factor`: Dilution Factor. Default: 15.
+- `--starting_noise`: Starting noise type. Choices: random, None. Default: None.
+- `--guidance_scale`:  Adherence strength to textual guidance. Default: 7.5.
 
 ## Project Structure
 ```bash
 GLOMA/
 │
 ├── checkpoints/
-│    ├── checkpoint_inpainting_text_image.pth
-│    ├── groundingdino_swint_ogc.pth
-│    ├── GroundingDINO_SwinT_OGC.py
-│    └── sam_vit_h_4b8939.pth
-│
-├── submodules/
-│    ├── gligen/
-│    ├── grounded_sam/
-│    └── lama_cleaner/
+│   ├── big-lama/
+│   ├── checkpoint_inpainting_text_image.pth
+│   ├── groundingdino_swint_ogc.pth
+│   └── sam_vit_h_4b8939.pth
 │
 ├── gloma/
-     ├── const/
-     ├── examples/
-     ├── generation_samples/
-     ├── LLM/
-     ├── detection.py
-     ├── gloma_class.py
-     ├── object_removal.py
-     └── run_gloma.py
+│   ├── assets/
+│   ├── debug_images
+│   ├── generation_samples/
+│   ├── lama/
+│   ├── LLM/
+│   ├── gligen_inference.py
+│   ├── gloma.py
+│   ├── lama_inpaint.py
+│   ├── object_removal.py
+│   ├── run_gloma.py
+│   ├── SAM_detection.py
+│   └── utils/
+│
+├── submodules/
+│   ├── GLIGEN/
+│   └── Grounded-Segment-Anything/
+│
+├── environment.yml
+├── install_submodules.sh
+├── README.md
+├── requirements.txt
+└── setup.py
 ```
 
 
