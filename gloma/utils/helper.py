@@ -9,10 +9,10 @@ from PIL import Image
 
 def save_image(image, file_name):
     """
-    Saves the image in the "experiments" folder.
+    Saves the image in the "debug_images" folder.
     """
-    # Ensure the "experiments" directory exists
-    output_dir = "experiments"
+    # Ensure the "debug_images" directory exists
+    output_dir = "debug_images"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -33,9 +33,9 @@ def draw_predicted_bbox(image_cpy: np.ndarray, bbox: List[float], name="bbox.jpg
     thickness = 2
     cv2.rectangle(image, (x1, y1), (x2, y2), color, thickness)
 
-    if not os.path.exists("experiments"):
-        os.makedirs("experiments")
-    cv2.imwrite("experiments/{}".format(name), image)
+    if not os.path.exists("debug_images"):
+        os.makedirs("debug_images")
+    cv2.imwrite("debug_images/{}".format(name), image)
 
 def draw_bounding_boxes(image_cpy, detections, name="bbox.jpg"):
     """
@@ -47,9 +47,9 @@ def draw_bounding_boxes(image_cpy, detections, name="bbox.jpg"):
         color = (0, 255, 0) 
         thickness = 2    
         cv2.rectangle(image, (x1, y1), (x2, y2), color, thickness)
-    if not os.path.exists("experiments"):
-        os.makedirs("experiments")
-    cv2.imwrite("experiments/{}".format(name), image)
+    if not os.path.exists("debug_images"):
+        os.makedirs("debug_images")
+    cv2.imwrite("debug_images/{}".format(name), image)
 
 def apply_mask(image, mask):
     """Applies the mask to the image to highlight the segmentation."""
@@ -70,7 +70,7 @@ def save_array_to_img(img_arr, img_p):
 
 def draw_masks(image_cpy, masks):
     """
-    Visualizes all segmentations together on the same image and saves it in the "experiments" folder.
+    Visualizes all segmentations together on the same image and saves it in the "debug_images" folder.
 
     Args:
     - image: The original image.
@@ -82,8 +82,8 @@ def draw_masks(image_cpy, masks):
 
     masked_image = apply_mask(image, combined_mask)
 
-    # Ensure the "experiments" directory exists
-    output_dir = "experiments"
+    # Ensure the "debug_images" directory exists
+    output_dir = "debug_images"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -143,16 +143,24 @@ def save_image_with_incremental_number(filename_prefix, image):
     cv2.imwrite(filename, resized_image)
     print(f"Resized image saved as {filename}")
 
-def convert_to_relative_bbox(locations, image_width, image_height):
-    print("Image Width: ", image_width)
-    print("Image Height: ", image_height)
-    x_min, y_min, x_max, y_max = locations
+def convert_bbox_to_relative_coordinates(bbox: List[float], image_shape: Tuple[int, int, int]) -> Tuple[float, float, float, float]:
+    """
+    Convert bounding box from absolute coordinates to relative coordinates.
+    
+    Args:
+    - bbox (tuple): The bounding box in format (x1, y1, x2, y2) with absolute coordinates.
+    - image_shape (tuple): Shape of the image, typically in format (height, width, channels).
 
-    # Calculate relative coordinates
-    relative_x_min = x_min / image_width
-    relative_y_min = y_min / image_height
-    relative_x_max = x_max / image_width
-    relative_y_max = y_max / image_height
+    Returns:
+    - tuple: The bounding box in relative coordinates.
+    """
+    height, width = image_shape[0], image_shape[1]
+    print("Image Width: ", width)
+    print("Image Height: ", height)
+    
+    x1_rel = bbox[0] / width
+    y1_rel = bbox[1] / height
+    x2_rel = bbox[2] / width
+    y2_rel = bbox[3] / height
 
-    # Return the relative bounding box
-    return [relative_x_min, relative_y_min, relative_x_max, relative_y_max]
+    return (x1_rel, y1_rel, x2_rel, y2_rel)
