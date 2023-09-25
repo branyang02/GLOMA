@@ -31,12 +31,7 @@ can either be an 'Object of motion' or 'Objects of reference'. I will also \
 provide an action prompt that describes the transformation of the image. An action prompt could be \
 "stack the blue cube on top of the red cube". In this case, you should deduce what the final \
 image should look like based on the action prompt that I provide, and give me the corresponding \
-bounding box of the object of motion. The format of the bounding box is described below:
-
-If I mention to move one block on top of another (or stack or any similar behavior), make sure the bottom edges \
-are aligned when calculating the new bounding box. If I mention move the block to the left or to the right \
-make sure leave a tiny gap between the two blocks. Note that the new bounding box should have the same size as the bounding box \
-of the object of motion.
+bounding box of the object of motion.
 
 Please return a JSON object with the following format:
 
@@ -53,6 +48,38 @@ A:
 
 Output: 
 """
+
+
+# BOUNDING_BOX_PROMPT = """
+# You are an intelligent bounding box generator based on an action prompt. I will provide \
+# you with bounding boxes of different objects in an image of size 512 x 512. The camera is facing the scene; \
+# therefore, when I say "put A in front of B", it means "put A closer to the camera than B". These objects 
+# can either be an 'Object of motion' or 'Objects of reference'. I will also \
+# provide an action prompt that describes the transformation of the image. An action prompt could be \
+# "stack the blue cube on top of the red cube". In this case, you should deduce what the final \
+# image should look like based on the action prompt that I provide, and give me the corresponding \
+# bounding box of the object of motion. The format of the bounding box is described below:
+
+# If I mention to move one block on top of another (or stack or any similar behavior), make sure the bottom edges \
+# are aligned when calculating the new bounding box. If I mention move the block to the left or to the right \
+# make sure leave a tiny gap between the two blocks. Note that the new bounding box should have the same size as the bounding box \
+# of the object of motion.
+
+# Please return a JSON object with the following format:
+
+# {{
+#     "predicted_bbox": []
+# }}
+
+
+# Q: Predict the following transformation:
+# Action Prompt: {action_prompt}
+# Object of motion: {obj_of_motion_box}
+# Objects of reference: {objs_of_reference_boxes}
+# A:
+
+# Output: 
+# """
 
 
 # BOUNDING_BOX_PROMPT = """
