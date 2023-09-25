@@ -51,8 +51,13 @@ def main():
         guidance_scale=args.guidance_scale
     )
     result_images = gloma.run_gloma()
-    for i, result_image in enumerate(result_images):
-        cv2.imwrite(f"result_{i}.jpg", result_image)
+    
+    # result_images has batch_size images
 
+    if args.debug_mode:
+        if not os.path.exists("results"):
+            os.makedirs("results")
+        for _, result_image in enumerate(result_images):
+            cv2.imwrite(f"results/result.png", result_image)
 
 main()
