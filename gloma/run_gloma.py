@@ -14,7 +14,7 @@ def main():
     parser.add_argument('--image_path', help='Input Image', required=True)
     parser.add_argument('--debug_mode', help='Debug Mode', default=False, type=bool)
     parser.add_argument('--image_size', help='Image Size', default=512, type=int)
-    parser.add_argument('--dilution_factor', help='Dilution Factor', default=30, type=int)
+    parser.add_argument('--dilution_factor', help='Dilution Factor', default=15, type=int)
     parser.add_argument('--starting_noise', choices=['random', None], 
                         default=None, 
                         help='Option to select starting noise type. Choose between "random" or None.')
