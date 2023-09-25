@@ -42,6 +42,8 @@ class GLOMA:
             rgb_image,
             debug_mode=False,
             dilution_factor=30,
+            starting_noise=None,
+            guidance_scale=7.5
     ):
         self.action_prompt = action_prompt
         self.box_threshold = box_threshold
@@ -51,6 +53,8 @@ class GLOMA:
         self.rgb_image = rgb_image
         self.debug_mode = debug_mode
         self.dilution_factor = dilution_factor
+        self.starting_noise = starting_noise
+        self.guidance_scale = guidance_scale
     
 
     def get_object_names(self) -> Tuple[str, List[str]]:
@@ -191,10 +195,12 @@ class GLOMA:
         # convert bbox to relative coordinates
         predicted_bbox = helper.convert_bbox_to_relative_coordinates(predicted_bbox, inpainted_image.shape)
         run_model(
-            input_image = inpainted_image,
-            prompt = self.action_prompt,
-            images = [obj_of_motion_image],
-            locations = [predicted_bbox],
+            input_image=inpainted_image,
+            prompt=self.action_prompt,
+            images=[obj_of_motion_image],
+            locations=[predicted_bbox],
+            starting_noise_flag=self.starting_noise,
+            guidance_scale=self.guidance_scale
         )
 
         return None

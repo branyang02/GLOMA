@@ -518,12 +518,12 @@ def run_model(
         images, 
         locations, 
         folder="generation_samples", 
-        # HYPERPARAMETERS FOR GLIGEN
         batch_size=1, 
         no_plms=False, 
         guidance_scale=7.5, 
         negative_prompt='longbody, lowres, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality',
         image_size=512,
+        starting_noise_flag=None,
         ):
 
     config = dict(
@@ -535,8 +535,13 @@ def run_model(
         save_folder_name="inpainting_box_image"
     )
 
-    starting_noise = torch.randn(batch_size, 4, 64, 64).to(device)
-    starting_noise = None
+    if starting_noise_flag == "random":
+        starting_noise = torch.randn(batch_size, 4, 64, 64).to(device)
+    else:
+        starting_noise = None
+
+    print("GUIDANCE SCALE: ", guidance_scale)
+
     run(
         config,
         folder,

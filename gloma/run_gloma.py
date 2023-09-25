@@ -15,6 +15,10 @@ def main():
     parser.add_argument('--debug_mode', help='Debug Mode', default=False, type=bool)
     parser.add_argument('--image_size', help='Image Size', default=512, type=int)
     parser.add_argument('--dilution_factor', help='Dilution Factor', default=30, type=int)
+    parser.add_argument('--starting_noise', choices=['random', None], 
+                        default=None, 
+                        help='Option to select starting noise type. Choose between "random" or None.')
+    parser.add_argument('--guidance_scale', help='Guidance Scale', default=7.5, type=float)
     args = parser.parse_args()
 
     action_prompt = args.action_prompt
@@ -39,7 +43,9 @@ def main():
         llm_choice=llm_choice,
         rgb_image=rgb_image,
         debug_mode=args.debug_mode,
-        dilution_factor=args.dilution_factor
+        dilution_factor=args.dilution_factor,
+        starting_noise=args.starting_noise,
+        guidance_scale=args.guidance_scale
     )
     result_image = gloma.run_gloma()
 
