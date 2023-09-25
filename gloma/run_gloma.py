@@ -2,7 +2,6 @@ import argparse
 import os
 
 import cv2
-from utils import helper
 
 from gloma import GLOMA
 

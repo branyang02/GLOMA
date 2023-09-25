@@ -1,17 +1,13 @@
-import sys
-from pathlib import Path
-from typing import List, Tuple, Dict
+from typing import Dict, List, Tuple
 
-import cv2
 import numpy as np
 import supervision as sv
-from SAM_detection import GroundedSAM
+from gligen_inference import generate_new_img
 from LLM.llm_factory import LLMFactory
 from LLM.llm_input_prompt import BOUNDING_BOX_PROMPT, OBJECT_PROMPT
-from utils import helper
-from gligen_inference import generate_new_img
-
 from object_removal import ObjectRemoval
+from SAM_detection import GroundedSAM
+from utils import helper
 
 
 class GLOMA:

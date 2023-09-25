@@ -1,9 +1,8 @@
-from typing import Dict, List, Tuple
+from typing import Dict
 
 import cv2
 import numpy as np
 from lama_inpaint import inpaint_img_with_lama
-from utils import helper
 
 
 class ObjectRemoval:
