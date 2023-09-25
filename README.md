@@ -15,5 +15,6 @@ pip install wldhx.yadisk-direct
 curl -L $(yadisk-direct https://disk.yandex.ru/d/ouP6l8VJ0HpMZg) -o big-lama.zip
 unzip big-lama.zip
 wget https://huggingface.co/gligen/gligen-inpainting-text-image-box/resolve/main/diffusion_pytorch_model.bin
+mv diffusion_pytorch_model.bin checkpoint_inpainting_text_image.pth
 
 ```

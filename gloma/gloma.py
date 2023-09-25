@@ -144,7 +144,6 @@ class GLOMA:
 
         return inpainted_image, obj_of_motion_image, obj_of_motion_bbox, objs_of_reference_bbox
     
-
     def predict_new_bbox(self, obj_of_motion_bbox: np.ndarray, objs_of_reference_bbox: Dict) -> List[float]:
         # convert bbox values from float to int
         obj_of_motion_bbox = {key: [int(val) for val in value] for key, value in obj_of_motion_bbox.items()}
@@ -158,7 +157,6 @@ class GLOMA:
         ))
         return helper.parse_bbox(predicted_bbox)
         
-
     def run_gloma(self):
         print("🚀🚀🚀 GLOMA IS RUNNING! 🚀🚀🚀")
         
