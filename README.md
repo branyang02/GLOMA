@@ -56,13 +56,12 @@ wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
 pip install gdown
 gdown --folder https://drive.google.com/drive/folders/1Nv51TpPnHPwR7c5YdD-wCvXekEF2kQp5
 unzip big-lama.zip
-```
 
 # llama-finetuning
 conda env update --file environment_llama.yml --prune
 cd checkpoints
 gdown --folder https://drive.google.com/drive/folders/1ncup99KPsfHEY8XFEDucEySsThzZQFK5
-
+```
 ## Usage
 
 Navigate to GLOMA/gloma and run the following example
