@@ -35,6 +35,8 @@ class GLOMA:
         self.dilution_factor = dilution_factor
         self.starting_noise = starting_noise
         self.guidance_scale = guidance_scale
+        
+        self.llm_object = LLMFactory.create_chat_object(self.llm_choice)
     
 
     def get_object_names(self) -> Tuple[str, List[str]]:
@@ -43,8 +45,8 @@ class GLOMA:
         - obj_of_motion: object of motion
         - obj_of_reference: [object of references]
         """
-        llm_object = LLMFactory.create_chat_object(self.llm_choice)
-        obj_separation = llm_object.query_message(OBJECT_PROMPT.format(action_prompt=self.action_prompt))
+        # llm_object = LLMFactory.create_chat_object(self.llm_choice)
+        obj_separation = self.llm_object.query_message(OBJECT_PROMPT.format(action_prompt=self.action_prompt))
         obj_of_motion, obj_of_reference = helper.parse_input(obj_separation)
         return obj_of_motion, obj_of_reference
 
@@ -136,8 +138,8 @@ class GLOMA:
         obj_of_motion_bbox = {key: [int(val) for val in value] for key, value in obj_of_motion_bbox.items()}
         objs_of_reference_bbox = {key: [int(val) for val in value] for key, value in objs_of_reference_bbox.items()}
 
-        llm_object = LLMFactory.create_chat_object(self.llm_choice)
-        predicted_bbox = llm_object.query_message(BOUNDING_BOX_PROMPT.format(
+        # llm_object = LLMFactory.create_chat_object(self.llm_choice)
+        predicted_bbox = self.llm_object.query_message(BOUNDING_BOX_PROMPT.format(
             action_prompt=self.action_prompt,
             obj_of_motion_box=obj_of_motion_bbox,
             objs_of_reference_boxes=objs_of_reference_bbox

@@ -58,6 +58,11 @@ gdown --folder https://drive.google.com/drive/folders/1Nv51TpPnHPwR7c5YdD-wCvXek
 unzip big-lama.zip
 ```
 
+# llama-finetuning
+conda env update --file environment_llama.yml --prune
+cd checkpoints
+gdown --folder https://drive.google.com/drive/folders/1ncup99KPsfHEY8XFEDucEySsThzZQFK5
+
 ## Usage
 
 Navigate to GLOMA/gloma and run the following example
