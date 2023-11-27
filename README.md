@@ -60,7 +60,7 @@ unzip big-lama.zip
 # llama-finetuning
 conda env update --file environment_llama.yml --prune
 cd checkpoints
-gdown --folder https://drive.google.com/drive/folders/1ncup99KPsfHEY8XFEDucEySsThzZQFK5
+gdown --folder https://drive.google.com/drive/folders/1MTRg5cE-nJAMROvhyFXmRDvtsj11L6AC
 ```
 ## Usage
 
