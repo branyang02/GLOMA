@@ -2,17 +2,19 @@ import torch
 import os
 from transformers import LlamaTokenizer, LlamaForCausalLM
 from utils.helper import extract_json_content
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from huggingface_hub import login
 login(os.getenv('HF_API'))
 
 model_id="meta-llama/Llama-2-13b-chat-hf"
 custom_cache_directory = os.getenv('CACHE_DIR')
-
+peft_model_id = os.getenv('PEFT_MODEL')
 
 
 class LLAMA:
     def __init__(self):
+    
         self.tokenizer = LlamaTokenizer.from_pretrained(model_id, cache_dir=custom_cache_directory)
         self.model = LlamaForCausalLM.from_pretrained(
             model_id, 
@@ -21,6 +23,7 @@ class LLAMA:
             torch_dtype=torch.float16, 
             cache_dir=custom_cache_directory
         )
+        self.model.load_adapter(peft_model_id)
         print("🦙🦙🦙 LLAMA Initialized! 🦙🦙🦙")
         
     def query_message(self, prompt):
