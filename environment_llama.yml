@@ -1,4 +1,4 @@
-name: GLOMA
+name: GLOMA3
 channels:
   - anaconda
   - conda-forge

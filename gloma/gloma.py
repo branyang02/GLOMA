@@ -23,7 +23,8 @@ class GLOMA:
             debug_mode=False,
             dilution_factor=30,
             starting_noise=None,
-            guidance_scale=7.5
+            guidance_scale=7.5,
+            use_cuda=False
     ):
         self.action_prompt = action_prompt
         self.box_threshold = box_threshold
@@ -36,7 +37,7 @@ class GLOMA:
         self.starting_noise = starting_noise
         self.guidance_scale = guidance_scale
         
-        self.llm_object = LLMFactory.create_chat_object(self.llm_choice)
+        self.llm_object = LLMFactory.create_chat_object(self.llm_choice, use_cuda=use_cuda)
     
 
     def get_object_names(self) -> Tuple[str, List[str]]:

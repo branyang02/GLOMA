@@ -21,6 +21,8 @@ def main():
                         default=None, 
                         help='Option to select starting noise type. Choose between "random" or None.')
     parser.add_argument('--guidance_scale', help='Guidance Scale', default=7.5, type=float)
+    parser.add_argument('--cuda', action='store_false', default=False)
+
     args = parser.parse_args()
 
     action_prompt = args.action_prompt
@@ -29,6 +31,7 @@ def main():
     nms_threshold = args.nms_threshold
     llm_choice = args.llm
     image_path = args.image_path
+    use_cuda = args.cuda
 
     # Check if image file exists
     if not os.path.exists(image_path):
@@ -47,7 +50,8 @@ def main():
         debug_mode=args.debug_mode,
         dilution_factor=args.dilution_factor,
         starting_noise=args.starting_noise,
-        guidance_scale=args.guidance_scale
+        guidance_scale=args.guidance_scale,
+        use_cuda=use_cuda
     )
     result_images = gloma.run_gloma()
     

@@ -58,9 +58,12 @@ gdown --folder https://drive.google.com/drive/folders/1Nv51TpPnHPwR7c5YdD-wCvXek
 unzip big-lama.zip
 
 # llama-finetuning
+# still 'in checkpoints'
+gdown https://drive.google.com/uc?id=1xE7QNcnp4_4msnOsXNnCJp_WiWQAi7d6
+unzip checkpoint-17120.zip
+
+cd ..
 conda env update --file environment_llama.yml --prune
-cd checkpoints
-gdown --folder https://drive.google.com/drive/folders/1ncup99KPsfHEY8XFEDucEySsThzZQFK5
 ```
 ## Usage
 

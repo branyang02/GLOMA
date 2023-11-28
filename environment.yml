@@ -1,4 +1,4 @@
-name: GLOMA
+name: GLOMA2
 channels:
     - defaults
 dependencies:
