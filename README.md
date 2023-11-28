@@ -74,7 +74,7 @@ Note that the HF llama model will be downloaded to your `CACHE_DIR`.
 Navigate to GLOMA/gloma and run the following example
 
 ```bash
-python run_gloma.py --image_path assets/2.jpg --action_prompt "put the green cube on top of the blue cube" --debug_mode True --llm llama
+$ python run_gloma.py --image_path assets/2.jpg --action_prompt "put the green cube on top of the blue cube" --debug_mode True --llm llama
 ```
 
 ## Arguments:
