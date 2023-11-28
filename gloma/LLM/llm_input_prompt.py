@@ -1,43 +1,48 @@
 OBJECT_PROMPT = """
-Identify the 'object of motion' and the 'objects of reference' based on the action described. The 'object of motion' is the singular item being moved or acted upon, while the 'objects of reference' can be one or more objects or locations in relation to which the motion is being described.
+In this task, you are required to analyze sentences describing actions involving objects. Your goal is to identify two key elements in each sentence: 
+1. The 'object of motion' - This is the primary item in the sentence that is being moved, manipulated, or acted upon.
+2. The 'objects of reference' - These are objects or locations that provide context to the action, indicating where, towards, or between which the action is taking place.
 
-Examples:
+The understanding of these elements is crucial for interpreting actions in a given context. Your response should be formatted as a JSON object, clearly distinguishing the 'object of motion' from the 'objects of reference'.
 
-"place the book on the table and chair" should yield:
-{{"object_of_motion": "book", "objects_of_reference": ["table", "chair"]}}
-
-"push the ball towards the goalpost" would be:
-{{"object_of_motion": "ball", "objects_of_reference": ["goalpost"]}}
-
-"hang the jacket between the door and window" translates to:
-{{"object_of_motion": "jacket", "objects_of_reference": ["door", "window"]}}
-
-Please return a JSON object with the following format:
+Please follow this JSON format for your response:
 
 {{
+    "object_of_motion": "<identified object of motion>",
+    "objects_of_reference": ["<list of identified objects of reference>"]
+}}
+
+Do not give me anything else other than the JSON return.
+
+Consider these examples to understand how to apply this analysis:
+
+Q: "Place the book on the table and chair."
+A: {{
+    "object_of_motion": "book",
+    "objects_of_reference": ["table", "chair"]
+}}
+
+Q: "Push the ball towards the goalpost."
+A: {{
+    "object_of_motion": "ball",
+    "objects_of_reference": ["goalpost"]
+}}
+
+Q: "Hang the jacket between the door and window."
+A: {{
     "object_of_motion": "jacket",
     "objects_of_reference": ["door", "window"]
 }}
 
-Q: What are the object of motion and objects of reference in the sentence "{action_prompt}"?
+Q: "{action_prompt}"
 A:
 """
 
 
 BOUNDING_BOX_PROMPT = """
-You are an intelligent bounding box generator based on an action prompt. I will provide \
-you with bounding boxes of different objects in an image of size 512 x 512. The camera is facing the scene; \
-therefore, when I say "put A in front of B", it means "put A closer to the camera than B". These objects 
-can either be an 'Object of motion' or 'Objects of reference'. I will also \
-provide an action prompt that describes the transformation of the image. An action prompt could be \
-"stack the blue cube on top of the red cube". In this case, you should deduce what the final \
-image should look like based on the action prompt that I provide, and give me the corresponding \
-bounding box of the object of motion. The format of the bounding box is described below:
+You are an intelligent bounding box generator based on an action prompt. I will provide you with bounding boxes of different objects in an image of size 512 x 512. The camera is facing the scene; therefore, when I say "put A in front of B", it means "put A closer to the camera than B". These objects can either be an 'Object of motion' or 'Objects of reference'. I will also provide an action prompt that describes the transformation of the image. An action prompt could be "stack the blue cube on top of the red cube". In this case, you should deduce what the final image should look like based on the action prompt that I provide, and give me the corresponding bounding box of the object of motion. The format of the bounding box is described below:
 
-If I mention to move one block on top of another (or stack or any similar behavior), make sure the bottom edges \
-are aligned when calculating the new bounding box. Note that bottom edges are not necessarilly the bounding box edges, but the edges related to the shape of the objects. If I mention move the block to the left or to the right \
-make sure leave a tiny gap between the two blocks. Note that the new bounding box should have the same size as the bounding box \
-of the object of motion.
+If I mention to move one block on top of another (or stack or any similar behavior), make sure the bottom edges are aligned when calculating the new bounding box. Note that bottom edges are not necessarily the bounding box edges, but the edges related to the shape of the objects. If I mention moving the block to the left or to the right, make sure to leave a tiny gap between the two blocks. Note that the new bounding box should have the same size as the bounding box of the object of motion.
 
 Please return a JSON object with the following format:
 
@@ -45,56 +50,38 @@ Please return a JSON object with the following format:
     "predicted_bbox": []
 }}
 
+Examples:
+
+Q: Predict the following transformation:
+Action Prompt: "Move the green sphere to the right of the yellow square."
+Object of motion: [100, 100, 150, 150]
+Objects of reference: [200, 100, 250, 150]
+A:
+{{
+    "predicted_bbox": [260, 100, 310, 150]
+}}
+
+Q: Predict the following transformation:
+Action Prompt: "Place the small red triangle on top of the large blue rectangle."
+Object of motion: [50, 50, 100, 100]
+Objects of reference: [150, 200, 300, 250]
+A:
+{{
+    "predicted_bbox": [175, 150, 225, 200]
+}}
+
+Q: Predict the following transformation:
+Action Prompt: "Stack the orange circle on top of the purple hexagon."
+Object of motion: [120, 120, 170, 170]
+Objects of reference: [300, 250, 350, 300]
+A:
+{{
+    "predicted_bbox": [325, 200, 375, 250]
+}}
 
 Q: Predict the following transformation:
 Action Prompt: {action_prompt}
 Object of motion: {obj_of_motion_box}
 Objects of reference: {objs_of_reference_boxes}
 A:
-
-Output: 
 """
-
-
-# BOUNDING_BOX_PROMPT = """
-# You are an intelligent bounding box generator based on an action prompt. I will provide \
-# you with two bounding boxes of two different objects in an image of size 2048 x 1526. The two \
-# different objects are either an 'Object of motion' or an 'Object of reference'. I will also \
-# provide an action prompt that describes the transformation of the image. An action prompt could be \
-# "stack the blue cube on top of the red cube". In this case, you should learn what the final \
-# image should look like based on the action prompt that I provide, and give me the corresponding \
-# bounding box of the object of motion. The format of the bounding box is described below:
-
-
-# Object of motion: (object name: [top-left x coordinate, top-left y coordinate, box width, box height])
-# Object of reference: (object name: [top-left x coordinate, top-left y coordinate, box width, box height])
-
-# If I mention to move one block on top of another (or stack or any similar behavior), make sure the bottom edges \
-# are aligned when calculating the new bounding box. If I mention move the block to the left or to the right \
-# make sure leave a tiny gap between the two blocks. 
-
-# DO NOT write me anything else other than just the bounding box.
-
-# Below is a complete example of the input:
-# Action prompt: move the red cube behind the blue cube
-# Object of motion: (red cube: [839.4738, 417.7555, 962.9438, 568.1781])
-# Object of reference: (blue cube: [1266.4738, 259.968, 1385.3822, 400.89212])
-# Output: [1258.0583, 175.13162, 1366.0491, 302.87888]
-
-# Action prompt: move the blue cube behind the red cube
-# Object of motion: (blue cube: [1058.583, 317.43393, 1158.7446, 458.84732])
-# Object of reference: (red cube: [787.00653, 427.04688, 919.6506, 575.8333])
-# Output: [817.57306, 337.97363, 939.5981, 478.3122 ]
-
-# Action Prompt: stack the blue cube on top of the red cube.
-# Object of motion: (blue cube: [1291.6324, 598.7196, 1458.1327, 772.59326])
-# Object of reference: (red cube: [839.1231, 411.08096, 958.4046, 561.6876])
-# Output: [787.2792, 249.24765, 940.1393, 423.95773]
-
-# Now, complete the following. Make sure your the size of the newly generated bounding box is as small as appropiate. Remember that the image has size 2048 x 1536.
-
-# Action Prompt: {action_prompt}
-# Object of motion: ({obj_of_motion}: {obj_of_motion_box})
-# Object of reference: ({obj_of_reference}: {obj_of_reference_box})
-# Output: 
-# """

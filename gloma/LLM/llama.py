@@ -1,17 +1,37 @@
 import torch
-# from transformers import LlamaTokenizer, LlamaForCausalLM
+import os
+from transformers import LlamaTokenizer, LlamaForCausalLM
+from utils.helper import extract_json_content
 
-model_path = 'openlm-research/open_llama_13b'
+from huggingface_hub import login
+login(os.getenv('HF_API'))
+
+model_id="meta-llama/Llama-2-13b-chat-hf"
+custom_cache_directory = os.getenv('CACHE_DIR')
+
+
 
 class LLAMA:
     def __init__(self):
-        self.tokenizer = LlamaTokenizer.from_pretrained(model_path)
+        self.tokenizer = LlamaTokenizer.from_pretrained(model_id, cache_dir=custom_cache_directory)
         self.model = LlamaForCausalLM.from_pretrained(
-            model_path, torch_dtype=torch.float16, device_map='auto',
+            model_id, 
+            load_in_8bit=True, 
+            device_map='auto', 
+            torch_dtype=torch.float16, 
+            cache_dir=custom_cache_directory
         )
-
+        print("🦙🦙🦙 LLAMA Initialized! 🦙🦙🦙")
+        
     def query_message(self, prompt):
-        input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids
-        input_ids = input_ids.to('cuda')
-        generation_output = self.model.generate(input_ids=input_ids, max_new_tokens=32)
-        return self.tokenizer.decode(generation_output[0])
+        model_input = self.tokenizer(prompt, return_tensors="pt").to("cuda")
+        input_length = model_input.input_ids.size(1)  # Get the length of the input sequence
+
+        self.model.eval()
+        with torch.no_grad():
+            output = self.model.generate(**model_input, max_new_tokens=100)[0]
+            generated_sequence = output[input_length:]  # Extract only the generated tokens
+
+            return_message = self.tokenizer.decode(generated_sequence, skip_special_tokens=True)
+            json_content = extract_json_content(return_message)
+            return json_content

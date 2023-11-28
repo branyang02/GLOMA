@@ -1,6 +1,7 @@
 import json
 import os
 from typing import List, Tuple
+import re
 
 import cv2
 import numpy as np
@@ -162,3 +163,29 @@ def convert_bbox_to_relative_coordinates(bbox: List[float], image_shape: Tuple[i
     y2_rel = bbox[3] / height
 
     return (x1_rel, y1_rel, x2_rel, y2_rel)
+
+
+
+
+def extract_json_content(return_message):
+    """Regular expression pattern to find the first instance of JSON content
+
+
+    Args:
+        return_message (str): input string.
+
+    Returns:
+        str: The first json string.
+    """
+    pattern = r'\{.*?\}'  # Non-greedy match to ensure only the first JSON object is captured
+    
+    # Search for the pattern in the return_message. re.search returns the first match found.
+    match = re.search(pattern, return_message, re.DOTALL)
+    
+    if match:
+        # Extract only the first JSON string found
+        json_string = match.group()
+        return json_string
+    else:
+        print("No JSON content found in the message.")
+        return None
