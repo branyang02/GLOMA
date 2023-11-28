@@ -9,24 +9,23 @@ GLOMA's intuitive interface allows users to communicate their image editing need
 <img width="1279" alt="image" src="https://github.com/branyang02/GLOMA/assets/107154811/3564dc6d-6733-445d-9143-ef914ce04642">
 
 ## Table of Contents
-- [Features](#features)
-- [Overview](#overview)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
 
+-   [Features](#features)
+-   [Overview](#overview)
+-   [Installation](#installation)
+-   [Usage](#usage)
+-   [Project Structure](#project-structure)
+-   [Contributing](#contributing)
+-   [License](#license)
 
 ## Features
 
-- **Natural Language Processing:** GLOMA can understand and interpret textual prompts provided by users for image manipulation.
-- **Advanced Image Editing:** Utilizes cutting-edge Diffusion models for high-quality image manipulations.
-- **User-friendly Interface:** Provides an intuitive interface that allows users to describe their image editing needs in natural language.
-- **Versatile Applications:** Suitable for a wide range of image editing tasks, from simple object movements to more complex scene generation.
+-   **Natural Language Processing:** GLOMA can understand and interpret textual prompts provided by users for image manipulation.
+-   **Advanced Image Editing:** Utilizes cutting-edge Diffusion models for high-quality image manipulations.
+-   **User-friendly Interface:** Provides an intuitive interface that allows users to describe their image editing needs in natural language.
+-   **Versatile Applications:** Suitable for a wide range of image editing tasks, from simple object movements to more complex scene generation.
 
 Explore the following sections to learn more about how to use GLOMA and its various features.
-
 
 ## Overview
 
@@ -58,27 +57,42 @@ gdown --folder https://drive.google.com/drive/folders/1Nv51TpPnHPwR7c5YdD-wCvXek
 unzip big-lama.zip
 ```
 
+## Environment Variables
+
+Please configure the following environment variables
+
+```bash
+export HF_API=
+export OPENAI_API_KEY=
+export CACHE_DIR=
+```
+
+Note that the HF llama model will be downloaded to your `CACHE_DIR`.
+
 ## Usage
 
 Navigate to GLOMA/gloma and run the following example
 
 ```bash
-python run_gloma.py --image_path assets/2.jpg --action_prompt "put the green cube on top of the yellow cube and in front of the blue cube"
+python run_gloma.py --image_path assets/2.jpg --action_prompt "put the green cube on top of the blue cube" --debug_mode True --llm llama
 ```
+
 ## Arguments:
-- `--action_prompt`: Textual action for image manipulation. Default: "stack the blue cube on top of the red cube".
-- `--box_threshold`: Confidence level for bounding box detection. Default: 0.3.
-- `--text_threshold`: Confidence level for text detection. Default: 0.25.
-- `--nms_threshold`: Overlap threshold for merging bounding boxes. Default: 0.2.
-- `--llm`:  Language model choice: "chatgpt" or "llama". Default: "chatgpt".
-- `--image_path`: Path to the input image. Required.
-- `--debug_mode`:  Toggle debug mode. This will save the intermediate masks and images that are processed in folder "debug_images". Default: False.
-- `--image_size`:  Resolution of input image (in pixels). Images are processed as squared images. Default: 512.
-- `--dilution_factor`: Dilution Factor. Default: 15.
-- `--starting_noise`: Starting noise type. Choices: random, None. Default: None.
-- `--guidance_scale`:  Adherence strength to textual guidance. Default: 7.5.
+
+-   `--action_prompt`: Textual action for image manipulation. Default: "stack the blue cube on top of the red cube".
+-   `--box_threshold`: Confidence level for bounding box detection. Default: 0.3.
+-   `--text_threshold`: Confidence level for text detection. Default: 0.25.
+-   `--nms_threshold`: Overlap threshold for merging bounding boxes. Default: 0.2.
+-   `--llm`: Language model choice: "chatgpt" or "llama". Default: "chatgpt".
+-   `--image_path`: Path to the input image. Required.
+-   `--debug_mode`: Toggle debug mode. This will save the intermediate masks and images that are processed in folder "debug_images". Default: False.
+-   `--image_size`: Resolution of input image (in pixels). Images are processed as squared images. Default: 512.
+-   `--dilution_factor`: Dilution Factor. Default: 15.
+-   `--starting_noise`: Starting noise type. Choices: random, None. Default: None.
+-   `--guidance_scale`: Adherence strength to textual guidance. Default: 7.5.
 
 ## Project Structure
+
 ```bash
 GLOMA/
 │
@@ -112,7 +126,6 @@ GLOMA/
 ├── requirements.txt
 └── setup.py
 ```
-
 
 ## Contributing
 
