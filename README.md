@@ -64,7 +64,7 @@ unzip checkpoint-17120.zip
 
 cd ..
 conda env update --file environment_llama.yml --prune
-```
+
 ## Usage
 
 Navigate to GLOMA/gloma and run the following example
