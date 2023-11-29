@@ -7,8 +7,11 @@ img = Image.new('RGB', (512, 512), 'black')
 bbox_motion = [166, 220, 203, 267]
 bbox_reference = [268, 219, 297, 267]
 
+suffix = "top"
+img_num = 1
+
 # llama
-bbox_pred = [309, 220, 346, 267]
+bbox_pred = [261, 171, 298, 218]
 model = 'llama'
 
 # ## chat
@@ -37,5 +40,5 @@ draw.text((bbox_reference[0], bbox_reference[1] - 20), labels[1], fill="green", 
 draw.text((bbox_pred[0], bbox_pred[1] - 20), labels[2], fill="blue", font=font)
 
 # Display the image
-output_path = f"/scratch/rhm4nj/GLOMA/GLOMA/gloma/{model}_1.jpg"  # Path to save the annotated image
+output_path = f"/scratch/rhm4nj/GLOMA/GLOMA/gloma/{model}_{img_num}_{suffix}.jpg"  # Path to save the annotated image
 img.save(output_path)

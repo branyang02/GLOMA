@@ -33,8 +33,13 @@ Explore the following sections to learn more about how to use GLOMA and its vari
 This repository contains the code and resources for the GLOMA project. The project involves multiple submodules and relies on specific Python packages. To ensure reproducibility and consistency, we use a Conda environment that specifies all the required dependencies.
 
 ## Installation
+First request access to the LLama 2 models from: https://huggingface.co/meta-llama/Llama-2-13b-chat-hf if installing from scratch
 
 ```bash
+### There is a working implementation in /project/CollabRoboGroup/GLOMA/GLOMA!
+
+### Setup from scratch
+
 git clone https://github.com/branyang02/GLOMA
 cd GLOMA
 
@@ -61,6 +66,8 @@ unzip big-lama.zip
 # still 'in checkpoints'
 gdown https://drive.google.com/uc?id=1xE7QNcnp4_4msnOsXNnCJp_WiWQAi7d6
 unzip checkpoint-17120.zip
+# in checkpoint-17120/adapter_config.json, change 'base_model_name_or_path' to /project/CollabRoboGroup/llama-2-13b-chat-hf
+# or wherever you have the llama model
 
 cd ..
 conda env update --file environment_llama.yml --prune
@@ -70,7 +77,12 @@ conda env update --file environment_llama.yml --prune
 Navigate to GLOMA/gloma and run the following example
 
 ```bash
-python run_gloma.py --image_path assets/2.jpg --action_prompt "put the green cube on top of the yellow cube and in front of the blue cube"
+export TRANSFORMERS_CACHE=/project/CollabRoboGroup/llama-2-13b-chat-hf # or wherever you store the llama models
+conda activate GLOMA # deactivate base if not already done so
+# If in project:
+conda activate ./GLOMA_ENV
+
+python run_gloma.py --action_prompt="put the red cube to the right of the blue cube" --image_path="assets/1.jpg" --llm llama --cuda
 ```
 ## Arguments:
 - `--action_prompt`: Textual action for image manipulation. Default: "stack the blue cube on top of the red cube".

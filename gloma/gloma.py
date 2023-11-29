@@ -39,7 +39,6 @@ class GLOMA:
         
         self.llm_object = LLMFactory.create_chat_object(self.llm_choice, use_cuda=use_cuda)
     
-
     def get_object_names(self) -> Tuple[str, List[str]]:
         """
         Returns:

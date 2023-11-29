@@ -11,15 +11,12 @@ from segment_anything import SamPredictor, sam_model_registry
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # GroundingDINO config and checkpoint
-# GROUNDING_DINO_CONFIG_PATH = "../submodules/Grounded-Segment-Anything/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
-# GROUNDING_DINO_CHECKPOINT_PATH = "../checkpoints/groundingdino_swint_ogc.pth"
-GROUNDING_DINO_CONFIG_PATH = "/scratch/rhm4nj/GLOMA/GLOMA/submodules/Grounded-Segment-Anything/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
-GROUNDING_DINO_CHECKPOINT_PATH = "/scratch/rhm4nj/GLOMA/GLOMA/checkpoints/groundingdino_swint_ogc.pth"
+GROUNDING_DINO_CONFIG_PATH = "../submodules/Grounded-Segment-Anything/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
+GROUNDING_DINO_CHECKPOINT_PATH = "../checkpoints/groundingdino_swint_ogc.pth"
 
 # Segment-Anything checkpoint
 SAM_ENCODER_VERSION = "vit_h"
-# SAM_CHECKPOINT_PATH = "../checkpoints/sam_vit_h_4b8939.pth"
-SAM_CHECKPOINT_PATH = "/scratch/rhm4nj/GLOMA/GLOMA/checkpoints/sam_vit_h_4b8939.pth"
+SAM_CHECKPOINT_PATH = "../checkpoints/sam_vit_h_4b8939.pth"
 
 paths_to_check = [GROUNDING_DINO_CONFIG_PATH, GROUNDING_DINO_CHECKPOINT_PATH, SAM_CHECKPOINT_PATH]
 for path in paths_to_check:
