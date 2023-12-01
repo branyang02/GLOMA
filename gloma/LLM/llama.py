@@ -1,40 +1,49 @@
-import torch
 import os
-from transformers import LlamaTokenizer, LlamaForCausalLM
-from utils.helper import extract_json_content
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import re
+import json
 
-from huggingface_hub import login
-login(os.getenv('HF_API'))
-
-model_id="meta-llama/Llama-2-13b-chat-hf"
-custom_cache_directory = os.getenv('CACHE_DIR')
-peft_model_id = os.getenv('PEFT_MODEL')
-
+model_path = os.getenv('ADAPTER_MODEL_PATH')
 
 class LLAMA:
-    def __init__(self):
-    
-        self.tokenizer = LlamaTokenizer.from_pretrained(model_id, cache_dir=custom_cache_directory)
-        self.model = LlamaForCausalLM.from_pretrained(
-            model_id, 
-            load_in_8bit=True, 
-            device_map='auto', 
-            torch_dtype=torch.float16, 
-            cache_dir=custom_cache_directory
-        )
-        self.model.load_adapter(peft_model_id)
-        print("🦙🦙🦙 LLAMA Initialized! 🦙🦙🦙")
-        
+    def __init__(self, cuda=False):
+        self.model = AutoModelForCausalLM.from_pretrained(model_path)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
+        self.cuda = cuda
+        if cuda:
+            self.model = self.model.to('cuda')
+
     def query_message(self, prompt):
-        model_input = self.tokenizer(prompt, return_tensors="pt").to("cuda")
-        input_length = model_input.input_ids.size(1)  # Get the length of the input sequence
 
-        self.model.eval()
-        with torch.no_grad():
-            output = self.model.generate(**model_input, max_new_tokens=100)[0]
-            generated_sequence = output[input_length:]  # Extract only the generated tokens
+        if "transformation:" not in prompt:
+            prompt = prompt.replace("Q:", "### INSTRUCTION: ")
+            prompt = prompt.replace("sentence:", "sentence: ### INPUT: ")
+            prompt = prompt.replace("A:", "### RESPONSE: ")
+        else:
+            prompt = prompt.replace("Q:", "### INSTRUCTION: ")
+            prompt = prompt.replace("transformation:", "transformation: \n### INPUT: ")
+            prompt = prompt.replace("Output:", "### RESPONSE: ")
+            
+        input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids
+        if self.cuda:
+            input_ids = input_ids.to('cuda')
+        
+        output_tokens = self.model.generate(input_ids, max_new_tokens=75)
+        raw_output = self.tokenizer.decode(output_tokens[0], skip_special_tokens=True)
+        print("RAW MODEL OUTPUT:", raw_output)
+        output = self._extract_json_response(raw_output)
+        print("MODEL OUTPUT:", output)
 
-            return_message = self.tokenizer.decode(generated_sequence, skip_special_tokens=True)
-            json_content = extract_json_content(return_message)
-            return json_content
+        return output
+    
+    def _extract_json_response(self, text):
+        pattern = r'### RESPONSE:.*?(\{.*?\})'
+        match = re.search(pattern, text, re.DOTALL)
+        if not match:
+            pattern = r'### A:.*?\{(.+?)\}'
+            match = re.search(pattern, text, re.DOTALL)
+
+        if match:
+            json_str = match.group(1).strip()
+            json_str = json_str.replace("'", "\"")
+            return json_str
