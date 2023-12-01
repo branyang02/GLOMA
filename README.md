@@ -65,6 +65,7 @@ Please configure the following environment variables
 export HF_API=
 export OPENAI_API_KEY=
 export CACHE_DIR=
+export ADAPTER_MODEL_PATH=/project/CollabRoboGroup/checkpoint-17120/
 ```
 
 Note that the HF llama model will be downloaded to your `CACHE_DIR`.
