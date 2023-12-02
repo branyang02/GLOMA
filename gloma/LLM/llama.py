@@ -2,17 +2,18 @@ import os
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import re
 import json
+import torch
 
 model_path = os.getenv('ADAPTER_MODEL_PATH')
 
 class LLAMA:
-    def __init__(self, cuda=False):
-        self.model = AutoModelForCausalLM.from_pretrained(model_path)
+    def __init__(self, cuda=True):
+        self.model = AutoModelForCausalLM.from_pretrained(model_path, torch_dtype=torch.float16)
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
         self.cuda = cuda
         if cuda:
-            self.model = self.model.to('cuda')
-
+            self.model = self.model.cuda()
+        
     def query_message(self, prompt):
 
         if "transformation:" not in prompt:
