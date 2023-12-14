@@ -21,6 +21,7 @@ def main():
                         default=None, 
                         help='Option to select starting noise type. Choose between "random" or None.')
     parser.add_argument('--guidance_scale', help='Guidance Scale', default=7.5, type=float)
+    parser.add_argument('--batch_size', help='Batch Size', default=1, type=int)
     args = parser.parse_args()
 
     action_prompt = args.action_prompt
@@ -38,18 +39,17 @@ def main():
     rgb_image = cv2.resize(rgb_image, (args.image_size, args.image_size))
 
     gloma = GLOMA(
-        action_prompt=action_prompt,
         box_threshold=box_threshold,
         text_threshold=text_threshold,
         nms_threshold=nms_threshold,
         llm_choice=llm_choice,
-        rgb_image=rgb_image,
         debug_mode=args.debug_mode,
         dilution_factor=args.dilution_factor,
         starting_noise=args.starting_noise,
-        guidance_scale=args.guidance_scale
+        guidance_scale=args.guidance_scale,
+        batch_size=args.batch_size
     )
-    result_images = gloma.run_gloma()
+    result_images = gloma.run_gloma(rgb_image, action_prompt)
     
     # result_images has batch_size images
 

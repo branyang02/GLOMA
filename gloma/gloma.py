@@ -14,48 +14,46 @@ class GLOMA:
 
     def __init__(
             self,
-            action_prompt,
             box_threshold,
             text_threshold,
             nms_threshold,
             llm_choice,
-            rgb_image,
             debug_mode=False,
             dilution_factor=30,
             starting_noise=None,
-            guidance_scale=7.5
+            guidance_scale=7.5,
+            batch_size=1
     ):
-        self.action_prompt = action_prompt
         self.box_threshold = box_threshold
         self.text_threshold = text_threshold
         self.nms_threshold = nms_threshold
         self.llm_choice = llm_choice
-        self.rgb_image = rgb_image
         self.debug_mode = debug_mode
         self.dilution_factor = dilution_factor
         self.starting_noise = starting_noise
         self.guidance_scale = guidance_scale
+        self.batch_size = batch_size
         self.llm_object = LLMFactory.create_chat_object(self.llm_choice)
     
 
-    def get_object_names(self) -> Tuple[str, List[str]]:
+    def get_object_names(self, action_prompt: str) -> Tuple[str, List[str]]:
         """
         Returns:
         - obj_of_motion: object of motion
         - obj_of_reference: [object of references]
         """
-        obj_separation = self.llm_object.query_message(OBJECT_PROMPT.format(action_prompt=self.action_prompt))
+        obj_separation = self.llm_object.query_message(OBJECT_PROMPT.format(action_prompt=action_prompt))
         obj_of_motion, obj_of_reference = helper.parse_input(obj_separation)
         return obj_of_motion, obj_of_reference
 
-    def grounded_sam_detections(self, class_prompt: List[str]) -> sv.Detections:
+    def grounded_sam_detections(self, rgb_image: np.ndarray, class_prompt: List[str]) -> sv.Detections:
         """
         Get bbox, masks from SAM
 
         Returns:
         - detections: Detection object
         """
-        grounded_sam = GroundedSAM(self.rgb_image, class_prompt, self.box_threshold, self.text_threshold, self.nms_threshold)
+        grounded_sam = GroundedSAM(rgb_image, class_prompt, self.box_threshold, self.text_threshold, self.nms_threshold)
         detections, class_prompt = grounded_sam.get_detections()
         return detections, class_prompt
     
@@ -131,39 +129,39 @@ class GLOMA:
 
         return inpainted_image, obj_of_motion_image, obj_of_motion_bbox, objs_of_reference_bbox
     
-    def predict_new_bbox(self, obj_of_motion_bbox: np.ndarray, objs_of_reference_bbox: Dict) -> List[float]:
+    def predict_new_bbox(self, obj_of_motion_bbox: np.ndarray, objs_of_reference_bbox: Dict, action_prompt: str) -> List[float]:
         # convert bbox values from float to int
         obj_of_motion_bbox = {key: [int(val) for val in value] for key, value in obj_of_motion_bbox.items()}
         objs_of_reference_bbox = {key: [int(val) for val in value] for key, value in objs_of_reference_bbox.items()}
 
         predicted_bbox = self.llm_object.query_message(BOUNDING_BOX_PROMPT.format(
-            action_prompt=self.action_prompt,
+            action_prompt=action_prompt,
             obj_of_motion_box=obj_of_motion_bbox,
             objs_of_reference_boxes=objs_of_reference_bbox
         ))
         return helper.parse_bbox(predicted_bbox)
         
-    def run_gloma(self):
+    def run_gloma(self, rgb_image: np.ndarray, action_prompt: str) -> List[np.ndarray]:
         print("🚀🚀🚀 GLOMA IS RUNNING! 🚀🚀🚀")
         
         #1. Get Objects
-        obj_of_motion, objs_of_reference = self.get_object_names()
+        obj_of_motion, objs_of_reference = self.get_object_names(action_prompt)
         print("object of motion: ", obj_of_motion)
         print("objects of reference: ", objs_of_reference)
 
         # 2. SAM
-        detections, class_prompt = self.grounded_sam_detections(class_prompt=[obj_of_motion] + objs_of_reference)
+        detections, class_prompt = self.grounded_sam_detections(rgb_image=rgb_image, class_prompt=[obj_of_motion] + objs_of_reference)
         if self.debug_mode:
             # DEBUG: visualize detected bouding boxes 
-            helper.draw_bounding_boxes(self.rgb_image, detections, name="detected_bounding_boxes.jpg")
+            helper.draw_bounding_boxes(rgb_image, detections, name="detected_bounding_boxes.jpg")
 
         # 3. Object Removal
-        inpainted_image, obj_of_motion_image, obj_of_motion_bbox, objs_of_reference_bbox = self.remove_object(self.rgb_image, detections, class_prompt)
+        inpainted_image, obj_of_motion_image, obj_of_motion_bbox, objs_of_reference_bbox = self.remove_object(rgb_image, detections, class_prompt)
         print("object of motion BBOX: ", obj_of_motion_bbox)
         print("object of reference BBOX: ", objs_of_reference_bbox)
 
         # 4. Predict new bbox
-        predicted_bbox = self.predict_new_bbox(obj_of_motion_bbox, objs_of_reference_bbox)
+        predicted_bbox = self.predict_new_bbox(obj_of_motion_bbox, objs_of_reference_bbox, action_prompt)
         print("predicted bbox: ", predicted_bbox)
         if self.debug_mode:
             # DEBUG: visualize predicted bbox
@@ -175,12 +173,13 @@ class GLOMA:
         predicted_bbox = helper.convert_bbox_to_relative_coordinates(predicted_bbox, inpainted_image.shape)
         return generate_new_img(
             input_image=inpainted_image,
-            prompt=self.action_prompt,
+            prompt=action_prompt,
             images=[obj_of_motion_image],
             locations=[predicted_bbox],
             starting_noise_flag=self.starting_noise,
             guidance_scale=self.guidance_scale,
-            debug_mode=self.debug_mode
+            debug_mode=self.debug_mode,
+            batch_size=self.batch_size
         )
 
 
