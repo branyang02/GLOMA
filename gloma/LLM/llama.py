@@ -31,9 +31,9 @@ class LLAMA:
         
         output_tokens = self.model.generate(input_ids, max_new_tokens=75)
         raw_output = self.tokenizer.decode(output_tokens[0], skip_special_tokens=True)
-        print("RAW MODEL OUTPUT:", raw_output)
+        # print("RAW MODEL OUTPUT:", raw_output)
         output = self._extract_json_response(raw_output)
-        print("MODEL OUTPUT:", output)
+        # print("MODEL OUTPUT:", output)
 
         return output
     
