@@ -18,6 +18,14 @@ GLOMA's intuitive interface allows users to communicate their image editing need
 -   [Contributing](#contributing)
 -   [License](#license)
 
+## Architecture
+<img width="1445" alt="image" src="https://github.com/user-attachments/assets/e7486690-d97c-4e59-a2c4-f471207f812a">
+
+## Results
+
+<img width="966" alt="image" src="https://github.com/user-attachments/assets/50a134ec-199a-4142-91a6-d11e81dd74c6">
+
+
 ## Features
 
 -   **Natural Language Processing:** GLOMA can understand and interpret textual prompts provided by users for image manipulation.
